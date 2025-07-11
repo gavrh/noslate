@@ -16,7 +16,6 @@ import org.checkerframework.framework.qual.DefaultQualifier;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.network.Connection;
-import net.minecraft.network.PacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
@@ -38,31 +37,23 @@ public final class Noslate extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         ServerPlayer nms = ((CraftPlayer) player).getHandle();
 
+        // backup original connection
         if (!originalConnections.containsKey(nms)) {
             originalConnections.put(nms, nms.connection);
         }
 
         try {
-            // get MinecraftServer
+            // grab server instance
             Field serverField = ServerPlayer.class.getDeclaredField("server");
             serverField.setAccessible(true);
             MinecraftServer server = (MinecraftServer) serverField.get(nms);
 
-            // create your replacement connection
-            Connection connection = nms.connection.connection;
+            Connection conn = nms.connection.connection;
             GameProfile profile = nms.getGameProfile();
             CommonListenerCookie cookie = CommonListenerCookie.createInitial(profile, false);
-            PlayerConnection custom = new PlayerConnection(server, connection, nms, cookie);
-            nms.connection = custom;
 
-            // also reflectively set the connections's internal PacketListener
-            for (Field field : Connection.class.getDeclaredFields()) {
-                if (PacketListener.class.isAssignableFrom(field.getType())) {
-                    field.setAccessible(true);
-                    field.set(connection, custom);
-                    break;
-                }
-            }
+            PlayerConnection custom = new PlayerConnection(server, conn, nms, cookie);
+            nms.connection = custom;
 
         } catch (Exception e) {
             e.printStackTrace();
