@@ -29,7 +29,7 @@ public final class Noslate extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         this.getServer().getPluginManager().registerEvents(this, this);
-        this.getServer().getPluginManager().registerEvents(new YLevelListener(), this);
+        this.getServer().getPluginManager().registerEvents(new YLevelListener(this), this);
     }
 
     @EventHandler
