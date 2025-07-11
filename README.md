@@ -1,1 +1,2 @@
-# DeepslateHider
+# Noslate
+The Deepslate Hider Plugin
