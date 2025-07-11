@@ -24,7 +24,7 @@ public class PlayerConnection extends ServerGamePacketListenerImpl {
         if (packet instanceof ClientboundLevelChunkWithLightPacket chunkPacket) {
             ServerLevel level = (ServerLevel) player.level();
             LevelChunk chunk = level.getChunk(chunkPacket.getX(), chunkPacket.getZ());
-            Packet<?> filtered = FilteredChunkSender.createFilteredChunkPacket(player, chunk);
+            Packet<?> filtered = ChunkSender.createFilteredChunkPacket(player, chunk);
             super.send(filtered);
         } else {
             super.send(packet);
