@@ -1,7 +1,9 @@
 # Noslate  
 _Deepslate Hider Plugin_
 
+<!--
 [![modrinth](https://cdn.jsdelivr.net/gh/Andre601/devins-badges@13e0142/assets/compact/available/modrinth_vector.svg)](https://modrinth.com/plugin/noslate)
+-->
 
 ## Overview
 
@@ -40,13 +42,20 @@ When players go underground they are shown a configurable radius of real terrain
 ## Installation
 
 ### Modrinth
+<!--
 1. Download the latest `.jar` from [Modrinth](https://modrinth.com/plugin/noslate)
 2. Drop it into your `plugins/` folder
 3. Restart your server
 4. Configure settings in `plugins/Noslate/config.yml`
+-->
+coming soon...
 
 ### Source
-coming soon...
+Clone this repository
+
+__Linux:__ Run ```./gradlew clean build```
+
+__Windows:__ Run ```./gradlew.bat clean build```
 
 ## Configuration Options
 
