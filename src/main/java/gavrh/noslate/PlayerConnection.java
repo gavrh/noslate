@@ -1,4 +1,4 @@
-package gg.mcsmp.noslate;
+package gavrh.noslate;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
