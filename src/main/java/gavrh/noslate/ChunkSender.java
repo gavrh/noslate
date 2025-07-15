@@ -1,4 +1,4 @@
-package gg.mcsmp.noslate;
+package gavrh.noslate;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;

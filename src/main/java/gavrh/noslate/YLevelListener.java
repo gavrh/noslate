@@ -1,4 +1,4 @@
-package gg.mcsmp.noslate;
+package gavrh.noslate;
 
 import java.util.HashSet;
 import java.util.Set;

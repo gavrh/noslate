@@ -7,7 +7,7 @@ plugins {
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.3.0" // Generates plugin.yml based on the Gradle config
 }
 
-group = "gg.mcsmp.Noslate"
+group = "gavrh.noslate"
 version = "1.0.0"
 description = "Deepslate Hider"
 
@@ -54,7 +54,7 @@ tasks {
 // Configure plugin.yml generation
 // - name, version, and description are inherited from the Gradle project.
 bukkitPluginYaml {
-    main = "gg.mcsmp.noslate.Noslate"
+    main = "gavrh.noslate.Noslate"
     load = BukkitPluginYaml.PluginLoadOrder.STARTUP
     authors.add("gavrh")
     apiVersion = "1.21.5"
