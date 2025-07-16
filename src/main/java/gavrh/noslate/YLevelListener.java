@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,10 +14,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.plugin.Plugin;
-
 import io.papermc.paper.threadedregions.scheduler.RegionScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
@@ -26,10 +23,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 
 public class YLevelListener implements Listener {
-
     private static final int RADIUS = 2;
     private static final int REVEAL_THRESHOLD_Y = 1;
-
     private final Plugin plugin;
     private final RegionScheduler scheduler;
     private final WeakHashMap<ServerPlayer, Set<ChunkPos>> revealedChunks = new WeakHashMap<>();
@@ -44,7 +39,6 @@ public class YLevelListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player bukkitPlayer = event.getPlayer();
         ServerPlayer player = ((CraftPlayer) bukkitPlayer).getHandle();
-
         double y = player.getBoundingBox().minY;
 
         boolean currentlyBelow = y <= REVEAL_THRESHOLD_Y;
@@ -78,8 +72,8 @@ public class YLevelListener implements Listener {
                 isBelowReveal.put(nms, false);
             }
         };
-
-        scheduler.runDelayed(plugin, to, task, 5L);
+        // longer delay to ensure anti-xray has processed chunks
+        scheduler.runDelayed(plugin, to, task, 10L);
     }
 
     @EventHandler
@@ -98,8 +92,7 @@ public class YLevelListener implements Listener {
                 isBelowReveal.put(nms, false);
             }
         };
-
-        scheduler.runDelayed(plugin, loc, task, 5L);
+        scheduler.runDelayed(plugin, loc, task, 10L);
     }
 
     private void revealChunksAroundPlayer(ServerPlayer player) {
@@ -143,21 +136,26 @@ public class YLevelListener implements Listener {
         Set<ChunkPos> toHide = new HashSet<>(currentlyRevealed);
         toHide.removeAll(newRevealed);
 
-        for (ChunkPos pos : toReveal) {
-            resendFilteredChunk(player, pos);
-        }
-        for (ChunkPos pos : toHide) {
-            resendFilteredChunk(player, pos);
+        if (!toReveal.isEmpty() || !toHide.isEmpty()) {
+            for (ChunkPos pos : toReveal) {
+                resendFilteredChunk(player, pos);
+            }
+            for (ChunkPos pos : toHide) {
+                resendFilteredChunk(player, pos);
+            }
         }
 
         revealedChunks.put(player, newRevealed);
     }
 
     private void resendFilteredChunk(ServerPlayer player, ChunkPos pos) {
-        ServerLevel level = (ServerLevel) player.level();
-        LevelChunk chunk = level.getChunk(pos.x, pos.z);
-        ClientboundLevelChunkWithLightPacket packet = ChunkSender.createFilteredChunkPacket(player, chunk);
-        player.connection.send(packet);
+        try {
+            ServerLevel level = (ServerLevel) player.level();
+            LevelChunk chunk = level.getChunk(pos.x, pos.z);
+            ClientboundLevelChunkWithLightPacket packet = ChunkSender.createFilteredChunkPacket(player, chunk);
+            player.connection.send(packet);
+        } catch (Exception e) {
+            Bukkit.getLogger().warning("Failed to resend filtered chunk at " + pos + " for player " + player.getName().getString());
+        }
     }
 }
-
