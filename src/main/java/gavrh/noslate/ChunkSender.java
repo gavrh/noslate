@@ -77,7 +77,6 @@ public class ChunkSender {
         FilteredLevelChunk filteredChunk = new FilteredLevelChunk(chunk, filteredSections);
         LevelLightEngine lightEngine = level.getLightEngine();
 
-        // use false for trustEdges to work better with anti-xray
         return new ClientboundLevelChunkWithLightPacket(filteredChunk, lightEngine, null, null, false);
     }
 
