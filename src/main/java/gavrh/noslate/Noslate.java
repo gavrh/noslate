@@ -33,7 +33,6 @@ public final class Noslate extends JavaPlugin implements Listener {
         Player player = event.getPlayer();
         ServerPlayer nms = ((CraftPlayer) player).getHandle();
         
-        // longer delay to ensure anti-xray has set up its handlers first
         scheduler.runDelayed(this, player.getLocation(), (ScheduledTask task) -> {
             try {
                 Channel channel = nms.connection.connection.channel;
@@ -43,7 +42,6 @@ public final class Noslate extends JavaPlugin implements Listener {
                 
                 ChunkFilterHandler handler = new ChunkFilterHandler(nms);
                 
-                // inject after anti-xray if it exists, otherwise before packet_handler
                 if (channel.pipeline().get("anti-xray") != null) {
                     channel.pipeline().addAfter("anti-xray", "noslate_chunk_filter", handler);
                 } else {
